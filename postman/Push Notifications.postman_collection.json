@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "f4496c9e-3f80-4e88-bcee-05e6e5564f4c",
+		"name": "Push Notifications",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "mediawiki get login token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api.php?action=query&meta=tokens&format=json&type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "query"
+						},
+						{
+							"key": "meta",
+							"value": "tokens"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						},
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				},
+				"description": "http://localhost:8080/api.php?action=query&meta=tokens&format=json"
+			},
+			"response": []
+		},
+		{
+			"name": "mediawiki get csrf token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1c3e4c7d-a114-4d7a-acc0-a016dcbacdf0",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.environment.set(\"csrftoken\", res.query.tokens.csrftoken);",
+							"console.log(\"csrftoken\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api.php?action=query&meta=tokens&format=json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "query"
+						},
+						{
+							"key": "meta",
+							"value": "tokens"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mediawiki post login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6049cd43-28df-4fa7-8f72-bb5b25397f1f",
+						"exec": [
+							"pm.sendRequest(\"http://localhost:8080/api.php?action=query&meta=tokens&format=json&type=login\", function (err, response) {",
+							"    const res = response.json();",
+							"    console.log(res)",
+							"",
+							"    pm.environment.set(\"lgtoken\", res.query.tokens.logintoken); ",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "login",
+							"type": "text"
+						},
+						{
+							"key": "lgname",
+							"value": "{{lgname}}",
+							"type": "text"
+						},
+						{
+							"key": "lgpassword",
+							"value": "{{lgpassword}}",
+							"type": "text"
+						},
+						{
+							"key": "lgtoken",
+							"value": "{{lgtoken}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api.php?format=json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api.php"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mediawiki post push subscription",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "942fcc0b-0cc4-4d72-a57a-dd5173b0a7fe",
+						"exec": [
+							"pm.sendRequest(\"http://localhost:8080/api.php?action=query&meta=tokens&format=json\", function (err, response) {",
+							"    const res = response.json();",
+							"    console.log(res)",
+							"",
+							"    pm.environment.set(\"csrftoken\", res.query.tokens.csrftoken); ",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "143e888d-f3ac-4bf0-a83c-2dde38cfb1ec",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "command",
+							"value": "create",
+							"type": "text"
+						},
+						{
+							"key": "token",
+							"value": "{{csrftoken}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api.php?action=echopushsubscriptions&format=json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "echopushsubscriptions"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
