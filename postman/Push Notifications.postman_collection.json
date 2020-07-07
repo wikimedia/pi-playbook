@@ -205,6 +205,16 @@
 							"key": "token",
 							"value": "{{csrftoken}}",
 							"type": "text"
+						},
+						{
+							"key": "provider",
+							"value": "fcm",
+							"type": "text"
+						},
+						{
+							"key": "providertoken",
+							"value": "123456",
+							"type": "text"
 						}
 					]
 				},
